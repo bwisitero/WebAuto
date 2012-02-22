@@ -1,4 +1,6 @@
-﻿using WebAuto.Core;
+﻿using System.Configuration;
+using NUnit.Framework;
+using WebAuto.Core;
 using WebAuto.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -8,27 +10,33 @@ using WebAuto.Library;
 
 namespace WebAuto.Tests
 {
-	[TestClass()]
+	[TestClass()]	
 	public class TestManagerTest
 	{
 		[TestMethod()]
+		[Test]
 		public void Execute()
 		{
-			ExcelRepository target = new ExcelRepository();
-			TestManager manager = new TestManager(target);
-			string masterfile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//master.xlsx");
-			string sequenceFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//sequences.xlsx");
-			string uimapFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//uimapsample.xlsx");
-			string dataDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//Data");
-			string resultsFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Results");
-			var config = new WebAutoConfiguration();
-			config.DataDirectory = dataDirectory;
-			config.UIMapFile = uimapFilename;
-			config.ResultsFolder = resultsFolder;
-			config.Browser = "ie";
-			config.FileExtension = ".xlsx";
+			var browsers = ConfigurationManager.AppSettings["browsers"].Split(',');
+			foreach (var browser in browsers)
+			{
 
-			manager.Execute(target.GetTestSuites(masterfile, sequenceFilename), config);
+				ExcelRepository target = new ExcelRepository();
+				TestManager manager = new TestManager(target);
+				string masterfile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//master.xlsx");
+				string sequenceFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//sequences.xlsx");
+				string uimapFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//uimap.xlsx");
+				string dataDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//Data");
+				string resultsFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Results");
+				var config = new WebAutoConfiguration();
+				config.DataDirectory = dataDirectory;
+				config.UIMapFile = uimapFilename;
+				config.ResultsFolder = resultsFolder;
+				config.Browser = browser.Trim();
+				config.FileExtension = ".xlsx";
+
+				manager.Execute(target.GetTestSuites(masterfile, sequenceFilename), config);
+			}
 		}
 	}
 }

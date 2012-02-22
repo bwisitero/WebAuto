@@ -75,7 +75,7 @@ namespace WebAuto.Tests
         public void GetUIMap()
         {
             ExcelRepository target = new ExcelRepository(); // TODO: Initialize to an appropriate value
-            string filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//uimapsample.xlsx");
+            string filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//uimap.xlsx");
             Assert.IsTrue(File.Exists(filename), "file doesnt exist " + filename);
             var result = target.GetUIMap(filename);
             Assert.AreNotEqual(result.Count, 0);

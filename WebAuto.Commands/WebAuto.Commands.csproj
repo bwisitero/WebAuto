@@ -56,11 +56,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssertElementPresentCommand.cs" />
+    <Compile Include="AssertElementNotPresentCommand.cs" />
+    <Compile Include="ClearCommand.cs" />
     <Compile Include="ClickCommand.cs" />
+    <Compile Include="Custom\CheckUrl.cs" />
+    <Compile Include="Custom\DragAndDropCommand.cs" />
+    <Compile Include="Custom\StoreTextCommand.cs" />
+    <Compile Include="Custom\StoreValueCommand.cs" />
+    <Compile Include="RunScriptCommand.cs" />
     <Compile Include="OpenCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectCommand.cs" />
     <Compile Include="TypeCommand.cs" />
+    <Compile Include="TypeDelayedCommand.cs" />
     <Compile Include="WaitCommand.cs" />
+    <Compile Include="Custom\WaitForElementNotPresentCommand.cs" />
+    <Compile Include="Custom\WaitForElementPresentCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
