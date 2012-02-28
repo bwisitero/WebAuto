@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Data.OleDb;
@@ -16,6 +17,7 @@ namespace WebAuto.Data
 
         public static string[] GetExcelSheetNames(string excelFile)
         {
+			if (!File.Exists(excelFile)) throw new FileNotFoundException("Excel file cannot be found. " + excelFile);
             OleDbConnection objConn = null;
 
             System.Data.DataTable dt = null;
@@ -52,7 +54,7 @@ namespace WebAuto.Data
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    excelSheets[i] = row["TABLE_NAME"].ToString().Remove(row["TABLE_NAME"].ToString().Length - 1);
+					excelSheets[i] = row["TABLE_NAME"].ToString().Remove(row["TABLE_NAME"].ToString().Length - 1).Replace("'", string.Empty).Replace("$", string.Empty);
                     i++;
                 }
 

@@ -88,12 +88,16 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="TestFiles\datasample.xlsx" />
+    <None Include="TestFiles\Data\Test Search 2.xlsx" />
     <None Include="TestFiles\Data\Test Search 1.xlsx" />
     <None Include="TestFiles\master.xlsx" />
     <None Include="TestFiles\sequences.xlsx" />
     <None Include="TestFiles\uimap.xlsx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy  "$(ProjectDir)TestFiles"  "$(TargetDir)TestFiles" /S /I /F /Y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

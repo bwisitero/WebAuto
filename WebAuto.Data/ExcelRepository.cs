@@ -38,8 +38,6 @@ namespace WebAuto.Data
             {
                 foreach (var sheetName in Utility.GetExcelSheetNames(filename))
                 {
-
-
 					if (IsDataTable(filename, sheetName))
                     {
                         var dataProvider = new ExcelStorage(typeof(UIDataRaw));
@@ -193,13 +191,18 @@ namespace WebAuto.Data
 						if (x>1 && val != null && testCase!=null)
 						{
 							int sequencePosition = -1;
-							if (int.TryParse(val.ToString(), out sequencePosition))
+							var sequencesPositions = val.ToString().Split(',');
+							foreach (var sPosition in sequencesPositions)
 							{
-								// get the ordered sequences for the test case
-								var seq = sequenceList[x-(dataProvider.StartColumn+1)];
-								//testCase.CommandGroups.Sequences.Add(seq.Name,new UICommandContainer(seq.Name, seq.Commands.ToArray()));
-								orderedSequences.Add(sequencePosition, seq);
+								if (int.TryParse(sPosition, out sequencePosition))
+								{
+									// get the ordered sequences for the test case
+									var seq = sequenceList[x - (dataProvider.StartColumn + 1)];
+									//testCase.CommandGroups.Sequences.Add(seq.Name,new UICommandContainer(seq.Name, seq.Commands.ToArray()));
+									orderedSequences.Add(sequencePosition, seq);
+								}
 							}
+							
 						}
 					}
 					// add testcase after constructed.  Skip test suites
@@ -207,7 +210,7 @@ namespace WebAuto.Data
 
 						foreach (var uiCommandContainer in orderedSequences.OrderBy(x=>x.Key))
 						{
-							testCase.CommandGroups.Sequences.Add(uiCommandContainer.Value.Name, uiCommandContainer.Value);
+							testCase.CommandGroups.Sequences.Add(uiCommandContainer.Value.Name+"("+uiCommandContainer.Key.ToString()+")", uiCommandContainer.Value);
 						}
 						orderedSequences = new SerializableDictionary<int, UICommandContainer>();
 					    testSuite.Add(testCase.GroupName, testCase);

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using WebAuto.Library;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace WebAuto.Tests
 {
@@ -23,10 +24,14 @@ namespace WebAuto.Tests
 
 				ExcelRepository target = new ExcelRepository();
 				TestManager manager = new TestManager(target);
-				string masterfile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//master.xlsx");
-				string sequenceFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//sequences.xlsx");
-				string uimapFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//uimap.xlsx");
-				string dataDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..//..//TestFiles//Data");
+				string masterfile = Path.IsPathRooted(ConfigurationManager.AppSettings["masterfile"]) ? ConfigurationManager.AppSettings["masterfile"] :
+					Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["masterfile"]);
+				string sequenceFilename = Path.IsPathRooted(ConfigurationManager.AppSettings["sequencefile"]) ? ConfigurationManager.AppSettings["sequencefile"] :
+					Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["sequencefile"]);
+				string uimapFilename = Path.IsPathRooted(ConfigurationManager.AppSettings["uimapfile"]) ? ConfigurationManager.AppSettings["uimapfile"] :
+					Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["uimapfile"]);
+				string dataDirectory = Path.IsPathRooted(ConfigurationManager.AppSettings["datadirectory"]) ? ConfigurationManager.AppSettings["datadirectory"] :
+					Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["datadirectory"]);
 				string resultsFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Results");
 				var config = new WebAutoConfiguration();
 				config.DataDirectory = dataDirectory;

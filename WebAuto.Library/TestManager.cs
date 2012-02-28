@@ -41,7 +41,6 @@ namespace WebAuto.Library
 					Console.WriteLine(string.Format(" {0}", testcase.Value.GroupName));
 					var dataBucket = Repository.GetData(Path.Combine(configuration.DataDirectory, testcase.Value.GroupName + configuration.FileExtension));
 
-
 					IWebDriver driver = null;
 					switch (configuration.Browser)
 					{
@@ -64,16 +63,31 @@ namespace WebAuto.Library
 					driver.Manage().Timeouts().ImplicitlyWait(new TimeSpan(0, 0, 20));
 					new Utility().ResizeTest(driver);
 
+					var usedData = new Dictionary<string, int>();
 					foreach (var sequence in testcase.Value.CommandGroups.Sequences)
 					{
 						var commandContainer = new UICommandContainer();
 						commandContainer.Name = sequence.Value.Name;
 
 						Console.WriteLine(string.Format("  {0}", sequence.Value.Name));
-						// check if sequence uses a list table
-						if (dataBucket.DataTables.ContainsKey(sequence.Value.Name.ToLower()))
+
+						if (!usedData.ContainsKey(sequence.Value.Name))
 						{
-							var table = dataBucket.DataTables[sequence.Value.Name.ToLower()];
+							usedData.Add(sequence.Value.Name, 1);
+						}
+						else
+						{
+							usedData[sequence.Value.Name]++;
+						}
+
+						var dataName = usedData[sequence.Value.Name] > 1
+						               	? string.Format("{0}({1})", sequence.Value.Name.ToLower(), usedData[sequence.Value.Name])
+						               	: sequence.Value.Name.ToLower();
+
+						// check if sequence uses a list table
+						if (dataBucket.DataTables.ContainsKey(dataName))
+						{
+							var table = dataBucket.DataTables[dataName];
 							foreach (var dataValue in table)
 							{
 								foreach (var command in sequence.Value.Commands)
@@ -114,7 +128,7 @@ namespace WebAuto.Library
 									Target = command.Target ?? string.Empty,
 									Value = command.Value ?? string.Empty
 								};
-								var cmd = PrepareCommand(command, dataBucket.DataValues[sequence.Value.Name.ToLower()], uiMap);
+								var cmd = PrepareCommand(command, dataBucket.DataValues[dataName], uiMap);
 								Console.WriteLine(string.Format("   {0} {1} {2}",
 										cmd.CommandName,
 										cmd.Target,
@@ -199,13 +213,16 @@ namespace WebAuto.Library
 				cmd.Value = uid.ContainsKey(t) ? uid[t] : string.Empty;
 			}
 
-			//used for evaluating the embedded $data() values inside targets
-			string pattern = @"\$data\((\w+)\)";
-			var matches = Regex.Matches(cmd.Target, pattern, RegexOptions.IgnoreCase);
-			foreach (var match in matches)
+			if (!string.IsNullOrEmpty(cmd.Target))
 			{
-				string key = match.ToString().Replace("$data(", "").Replace(")", "");
-				cmd.Target = cmd.Target.Replace(match.ToString(), uid[key]);
+				//used for evaluating the embedded $data() values inside targets
+				string pattern = @"\$data\((\w+)\)";
+				var matches = Regex.Matches(cmd.Target, pattern, RegexOptions.IgnoreCase);
+				foreach (var match in matches)
+				{
+					string key = match.ToString().Replace("$data(", "").Replace(")", "");
+					cmd.Target = cmd.Target.Replace(match.ToString(), uid[key]);
+				}
 			}
 
 			if (needsRandomNumber)
